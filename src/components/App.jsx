@@ -6,24 +6,15 @@ var axios = require("axios");
 
 var FormData = require("form-data");
 var data = new FormData();
-// var config = {
-//   method: "get",
-//   url: "https://devza.com/tests/tasks/listusers",
-//   headers: {
-//     AuthToken: "UrM4YHgb1FcqEf1tuKwmAMMX5MxFZ12a",
-//   },
-// };
-// listusers,create,update,delete,list
 
 const apikey = "UrM4YHgb1FcqEf1tuKwmAMMX5MxFZ12a";
-
-function delet(id) {
-  data.append("taskid", `${id}`);
-}
 
 // new Date(year, month, day, hours, minutes, seconds, milliseconds);
 function App() {
   const d = new Date();
+  useEffect(() => {
+    api({ url: "list" });
+  }, [api]);
   function api({
     url,
     message,
@@ -46,24 +37,14 @@ function App() {
       url: `https://devza.com/tests/tasks/${url}`,
       headers: {
         AuthToken: "UrM4YHgb1FcqEf1tuKwmAMMX5MxFZ12a",
-        // ...check,
+        ...data.getHeaders
       },
       data: data && data,
     };
     axios(config)
-      .then((response) =>
-        url === "listusers" || url === "list"
-          ? setItem(JSON.parse(JSON.stringify(response.data.tasks)))
-          : //console.log(JSON.parse(JSON.stringify(response.data.tasks)))
-            // .json()
-            // .filter((dat) => assigned_name === "Arpit")
-            console.log(JSON.stringify(response.data))
-      )
+      .then((response) => url === "listusers" || url === "list" ? setItem(JSON.parse(JSON.stringify(response.data.tasks))) : console.log(JSON.stringify(response.data)))
       .catch((error) => error);
   }
-  useEffect(() => {
-    api({ url: "list" });
-  }, []);
   const [text, setInput] = useState("");
   const [items, setItem] = useState([]);
 
@@ -72,14 +53,15 @@ function App() {
     setInput(value);
   };
 
-  function addItems() { 
+  function addItems() {
+    api({ url: "create", message: text });
     setItem((preV) => [...preV, text]);
     setInput(" ");
   }
 
-  function deleteItem(id, it) {
+  function deleteItem(id) {
     setItem((preV) => preV.filter((item) => item.id !== id));
-    api({ url: "delete", id: id });
+    api({ url: "delete", id });
   }
 
   const keyPress = (e) => {
