@@ -131,7 +131,6 @@ function App() {
             display: loader ? "none" : "flex",
             justifyContent: "center",
             alignItems: "center",
-            width: "100%",
             height: 300,
           }}
         >
