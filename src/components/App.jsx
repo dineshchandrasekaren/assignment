@@ -11,7 +11,18 @@ const apikey = "UrM4YHgb1FcqEf1tuKwmAMMX5MxFZ12a";
 
 // new Date(year, month, day, hours, minutes, seconds, milliseconds);
 function App() {
+  const [loader, setLoader] = useState(false);
+  const [list, setList] = useState(true);
   const d = new Date();
+  function showLoadingSpinner() {
+    setLoader(true);
+    setList(false);
+  }
+
+  function hideLoadingSpinner() {
+    setLoader(false);
+    setList(true);
+  }
   useEffect(() => {
     api({ url: "list" });
   }, [api]);
@@ -21,6 +32,7 @@ function App() {
     due_date = `${d.getFullYear()}-${d.getMonth()}-${d.getDay()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`,
     id,
   }) {
+    showLoadingSpinner();
     // const check = data && [...data.getHeaders()];
     if (url === "create" || url === "update") {
       data.append("message", message);
@@ -42,11 +54,14 @@ function App() {
       data: data && data,
     };
     axios(config)
-      .then((response) =>
-        url === "listusers" || url === "list"
-          ? setItem(JSON.parse(JSON.stringify(response.data.tasks)))
-          : console.log(JSON.stringify(response.data))
-      )
+      .then((response) => {
+        if (url === "listusers" || url === "list") {
+          setItem(JSON.parse(JSON.stringify(response.data.tasks)));
+        } else {
+          console.log(JSON.stringify(response.data));
+        }
+      })
+      .then(() => hideLoadingSpinner())
       .catch((error) => error);
   }
   const [text, setInput] = useState("");
@@ -67,7 +82,10 @@ function App() {
     setItem((preV) => preV.filter((item) => item.id !== id));
     api({ url: "delete", id });
   }
-
+  function onEdit(e) {
+    const { value } = e.target;
+    setInput(value);
+  }
   const keyPress = (e) => {
     const { key } = e;
     return key === "Enter" && addItems();
@@ -84,12 +102,32 @@ function App() {
         onClick={addItems}
       />
       <div>
-        <ul>
+        <div
+          style={{
+            display: loader ? "none" : "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: 300,
+          }}
+        >
+          <span
+            className="loader"
+            style={{
+              border: " 10px solid #f3f3ca",
+              borderTop: "10px solid #333",
+              width: 80,
+              height: 80,
+            }}
+          />
+        </div>
+        <ul style={{ display: list ? "none" : "block" }}>
           {items.map((item, index) => (
             <TodoList
               key={index}
               it={index}
               id={item.id}
+              onChange={onEdit}
               onChecked={deleteItem}
               list={item.message}
             />
