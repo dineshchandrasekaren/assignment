@@ -87,14 +87,30 @@ function App() {
     setItem((preV) => [...preV, text]);
     setInput(" ");
 
-  
+    // toast("Task added", {
+    //   position: "bottom-right",
+    //   autoClose: 5000,
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    // });
   }
   //Delete item when you double tap on that item
   function deleteItem(id) {
     setItem((preV) => preV.filter((item) => item.id !== id));
     api({ url: "delete", id });
 
-   
+    // toast("Task Removed", {
+    //   position: "bottom-right",
+    //   autoClose: 5000,
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    // });
   }
 
   //edit component
@@ -131,6 +147,7 @@ function App() {
             display: loader ? "none" : "flex",
             justifyContent: "center",
             alignItems: "center",
+            width: "100%",
             height: 300,
           }}
         >
