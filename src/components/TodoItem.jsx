@@ -5,7 +5,7 @@ function TodoList(props) {
   return (
     <div
       onDoubleClick={() => props.onChecked(props.id)}
-      onMouseEnter={() => setOpen(true)}
+      onClick={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
       <li contentEditable={open} onChange={props.onChange}>{props.list}</li>
