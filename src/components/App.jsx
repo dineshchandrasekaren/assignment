@@ -37,12 +37,16 @@ function App() {
       url: `https://devza.com/tests/tasks/${url}`,
       headers: {
         AuthToken: "UrM4YHgb1FcqEf1tuKwmAMMX5MxFZ12a",
-        ...data.getHeaders
+        ...data.getHeaders,
       },
       data: data && data,
     };
     axios(config)
-      .then((response) => url === "listusers" || url === "list" ? setItem(JSON.parse(JSON.stringify(response.data.tasks))) : console.log(JSON.stringify(response.data)))
+      .then((response) =>
+        url === "listusers" || url === "list"
+          ? setItem(JSON.parse(JSON.stringify(response.data.tasks)))
+          : console.log(JSON.stringify(response.data))
+      )
       .catch((error) => error);
   }
   const [text, setInput] = useState("");
