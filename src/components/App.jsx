@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import InputArea from "./InputArea";
 import TodoList from "./TodoItem";
-
 var axios = require("axios");
 
 var FormData = require("form-data");
@@ -11,21 +10,29 @@ const apikey = "UrM4YHgb1FcqEf1tuKwmAMMX5MxFZ12a";
 
 // new Date(year, month, day, hours, minutes, seconds, milliseconds);
 function App() {
+  const [text, setInput] = useState("");
+  const [items, setItem] = useState([]);
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState(true);
-  const d = new Date();
+
+  // show loader function
   function showLoadingSpinner() {
     setLoader(true);
     setList(false);
   }
 
+  // hide loader function
   function hideLoadingSpinner() {
     setLoader(false);
     setList(true);
   }
+
+  //initial load
   useEffect(() => {
     api({ url: "list" });
   }, [api]);
+
+  //API function
   function api({
     url,
     message,
@@ -33,7 +40,8 @@ function App() {
     id,
   }) {
     showLoadingSpinner();
-    // const check = data && [...data.getHeaders()];
+
+    //uploading data based on url
     if (url === "create" || url === "update") {
       data.append("message", message);
       data.append("due_date", due_date);
@@ -43,8 +51,8 @@ function App() {
     } else if (url === "delete") {
       data.append("taskid", id);
     }
-
-    var config = {
+    // method config
+    let config = {
       method: url === "listusers" || url === "list" ? "get" : "post",
       url: `https://devza.com/tests/tasks/${url}`,
       headers: {
@@ -53,6 +61,8 @@ function App() {
       },
       data: data && data,
     };
+
+    // axios config
     axios(config)
       .then((response) => {
         if (url === "listusers" || url === "list") {
@@ -64,44 +74,58 @@ function App() {
       .then(() => hideLoadingSpinner())
       .catch((error) => error);
   }
-  const [text, setInput] = useState("");
-  const [items, setItem] = useState([]);
 
+  // getting input text
   const updateItem = (e) => {
     const { value } = e.target;
     setInput(value);
   };
 
+  //update in the list
   function addItems() {
     api({ url: "create", message: text });
     setItem((preV) => [...preV, text]);
     setInput(" ");
-  }
 
+  
+  }
+  //Delete item when you double tap on that item
   function deleteItem(id) {
     setItem((preV) => preV.filter((item) => item.id !== id));
     api({ url: "delete", id });
+
+   
   }
+
+  //edit component
   function onEdit(e) {
     const { value } = e.target;
     setInput(value);
   }
+
+  //update using enter key
   const keyPress = (e) => {
     const { key } = e;
     return key === "Enter" && addItems();
   };
+
   return (
     <div className="container">
+      {/* heading */}
       <div className="heading">
         <h1>To-Do List</h1>
       </div>
+
+      {/* Input text component */}
       <InputArea
         onPressed={keyPress}
         onChange={updateItem}
         value={text}
         onClick={addItems}
       />
+
       <div>
+        {/* loader component */}
         <div
           style={{
             display: loader ? "none" : "flex",
@@ -121,6 +145,8 @@ function App() {
             }}
           />
         </div>
+
+        {/* TodoList */}
         <ul style={{ display: list ? "none" : "block" }}>
           {items.map((item, index) => (
             <TodoList
